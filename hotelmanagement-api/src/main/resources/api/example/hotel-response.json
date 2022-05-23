@@ -1,0 +1,124 @@
+{
+    "hotelInfo":[{   
+"hotelId": 6,
+"hotelName": "Infinity Hotel",
+"hotelLocation": "hyderabad",
+"numberOfRoomwithoutAc": 5,
+"numberOfRoomwithAc": 6,
+"Aminities":
+	{	
+	"Auditorium": "yes",
+	"playGroun": "yes",
+	"swimingPool": "yes"
+	},
+"hotelAddress":
+	{
+	"address": "boraband Road",
+	"pinCode": "500018",
+	"state": "Telangana",
+	"district": "Any",
+	"country": "India",
+	"googleMapUrl": "http://jhgjhgj"
+	},
+"contactNumber": "1234567890",
+"mailAddress": "dfsalkfjk@gmail.com",
+"contactPerson": "tulsi"
+    },
+    {   
+"hotelId": 7,
+"hotelName": "Infinity Hotel",
+"hotelLocation": "Patna",
+"numberOfRoomwithoutAc": 5,
+"numberOfRoomwithAc": 3,
+"Aminities":
+	{	
+	"Auditorium": "yes",
+	"playGroun": "yes",
+	"swimingPool": "yes"
+	},
+"hotelAddress":
+	{
+	"address": "Marg Road",
+	"pinCode": "500033",
+	"state": "Bihar",
+	"district": "Any",
+	"country": "India",
+	"googleMapUrl": "http://jhgjhgj"
+	},
+"contactNumber": "1234567890",
+"mailAddress": "dfsalkfjk@gmail.com",
+"contactPerson": "suresh"
+    },{   
+"hotelId": 8,
+"hotelName": "Golden Hotel",
+"hotelLocation": "Patna",
+"numberOfRoomwithoutAc": 7,
+"numberOfRoomwithAc": 6,
+"Aminities":
+	{	
+	"Auditorium": "yes",
+	"playGroun": "yes",
+	"swimingPool": "no"
+	},
+"hotelAddress":
+	{
+	"address": "gull Road",
+	"pinCode": "500099",
+	"state": "Ap",
+	"district": "Any",
+	"country": "India",
+	"googleMapUrl": "http://jhgjhgj"
+	},
+"contactNumber": "12345677",
+"mailAddress": "dsfhghag@gmail.com",
+"contactPerson": "sathis"
+    },{   
+"hotelId": 9,
+"hotelName": "night Hotel",
+"hotelLocation": "mumbai",
+"numberOfRoomwithoutAc": 9,
+"numberOfRoomwithAc": 9,
+"Aminities":
+	{	
+	"Auditorium": "yes",
+	"playGroun": "no",
+	"swimingPool": "yes"
+	},
+"hotelAddress":
+	{
+	"address": "highy Road",
+	"pinCode": "500678",
+	"state": "mumbai",
+	"district": "Any",
+	"country": "India",
+	"googleMapUrl": "http://jhgjhgj"
+	},
+"contactNumber": "123456788890",
+"mailAddress": "dfyuihjk@gmail.com",
+"contactPerson": "ibrahim"
+    },{   
+"hotelId": 10,
+"hotelName": "taj Hotel",
+"hotelLocation": "jarkand",
+"numberOfRoomwithoutAc": 5,
+"numberOfRoomwithAc": 4,
+"Aminities":
+	{	
+	"Auditorium": "no",
+	"playGroun": "yes",
+	"swimingPool": "yes"
+	},
+"hotelAddress":
+	{
+	"address": "main Road",
+	"pinCode": "6778787",
+	"state": "UP",
+	"district": "Any",
+	"country": "India",
+	"googleMapUrl": "http://jhgjhgj"
+	},
+"contactNumber": "1234567890",
+"mailAddress": "dfsalkfjk@gmail.com",
+"contactPerson": "tulsi"
+    }]
+}

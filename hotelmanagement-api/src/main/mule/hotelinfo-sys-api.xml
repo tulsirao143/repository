@@ -1,0 +1,222 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<mule xmlns:mongo="http://www.mulesoft.org/schema/mule/mongo" xmlns:ee="http://www.mulesoft.org/schema/mule/ee/core" xmlns:doc="http://www.mulesoft.org/schema/mule/documentation" xmlns="http://www.mulesoft.org/schema/mule/core" xmlns:apikit="http://www.mulesoft.org/schema/mule/mule-apikit" xmlns:http="http://www.mulesoft.org/schema/mule/http" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.mulesoft.org/schema/mule/core http://www.mulesoft.org/schema/mule/core/current/mule.xsd http://www.mulesoft.org/schema/mule/http http://www.mulesoft.org/schema/mule/http/current/mule-http.xsd http://www.mulesoft.org/schema/mule/mule-apikit http://www.mulesoft.org/schema/mule/mule-apikit/current/mule-apikit.xsd 
+http://www.mulesoft.org/schema/mule/ee/core http://www.mulesoft.org/schema/mule/ee/core/current/mule-ee.xsd
+http://www.mulesoft.org/schema/mule/mongo http://www.mulesoft.org/schema/mule/mongo/current/mule-mongo.xsd">
+    <http:listener-config name="hotelinfo-sys-api-httpListenerConfig">
+        <http:listener-connection host="0.0.0.0" port="8091" />
+    </http:listener-config>
+    <apikit:config name="hotelinfo-sys-api-config" api="hotelinfo-sys-api.raml" outboundHeadersMapName="outboundHeaders" httpStatusVarName="httpStatus" />
+    <mongo:config name="MongoDB_Config" doc:name="MongoDB Config" doc:id="f3a303ef-8a4e-469d-81d0-479a54911d65" >
+		<mongo:connection-string-connection connectionString="mongodb+srv://root:112212@cluster0.o1tom.mongodb.net/hotelMgmt?retryWrites=true&amp;w=majority" />
+	</mongo:config>
+	<mongo:config name="MongoDB_Config1" doc:name="MongoDB Config" doc:id="51f99224-f8aa-4d99-a9c2-7940af19df9c" >
+		<mongo:connection-string-connection connectionString="mongodb+srv://root:112212@cluster0.o1tom.mongodb.net/hotelMgmt?retryWrites=true&amp;w=majority" />
+	</mongo:config>
+	<mongo:config name="MongoDB_Config2" doc:name="MongoDB Config" doc:id="4f152da1-f4a2-451b-9673-2de6a07598eb" />
+	<mongo:config name="MongoDB_Config3" doc:name="MongoDB Config" doc:id="78495050-12f9-40c7-84b0-254946749db2" >
+		<mongo:connection-string-connection connectionString="mongodb+srv://root:112212@cluster0.o1tom.mongodb.net/hotelMgmt?retryWrites=true&amp;w=majority" />
+	</mongo:config>
+	<mongo:config name="MongoDB_Config4" doc:name="MongoDB Config" doc:id="8d08f7d5-30a0-480c-9b5e-778fcce9a308" >
+		<mongo:connection-string-connection connectionString="mongodb+srv://root:112212@cluster0.o1tom.mongodb.net/hotelMgmt?retryWrites=true&amp;w=majority" />
+	</mongo:config>
+	<mongo:config name="MongoDB_Config5" doc:name="MongoDB Config" doc:id="c517d3fa-7834-4ed4-874b-223124ce4dec" >
+		<mongo:connection-string-connection connectionString="mongodb+srv://root:112212@cluster0.o1tom.mongodb.net/hotelMgmt?retryWrites=true&amp;w=majority" />
+	</mongo:config>
+	<mongo:config name="MongoDB_Config6" doc:name="MongoDB Config" doc:id="9c8fbad4-07a1-46d6-a4e8-1fda2d97fb8c" >
+		<mongo:connection-string-connection connectionString="mongodb+srv://root:112212@cluster0.o1tom.mongodb.net/hotelMgmt?retryWrites=true&amp;w=majority" />
+	</mongo:config>
+	<mongo:config name="MongoDB_Config7" doc:name="MongoDB Config" doc:id="d8f98670-2538-4ac0-86ef-22bb41e5290c" >
+		<mongo:connection-string-connection connectionString="mongodb+srv://root:112212@cluster0.o1tom.mongodb.net/hotelMgmt?retryWrites=true&amp;w=majority" />
+	</mongo:config>
+	<flow name="hotelinfo-sys-api-main">
+        <http:listener config-ref="hotelinfo-sys-api-httpListenerConfig" path="/api/*">
+            <http:response statusCode="#[vars.httpStatus default 200]">
+                <http:headers>#[vars.outboundHeaders default {}]</http:headers>
+            </http:response>
+            <http:error-response statusCode="#[vars.httpStatus default 500]">
+                <http:body>#[payload]</http:body>
+                <http:headers>#[vars.outboundHeaders default {}]</http:headers>
+            </http:error-response>
+        </http:listener>
+        <apikit:router config-ref="hotelinfo-sys-api-config" />
+        <error-handler>
+            <on-error-propagate type="APIKIT:BAD_REQUEST">
+                <ee:transform xmlns:ee="http://www.mulesoft.org/schema/mule/ee/core" xsi:schemaLocation="http://www.mulesoft.org/schema/mule/ee/core http://www.mulesoft.org/schema/mule/ee/core/current/mule-ee.xsd">
+                    <ee:message>
+                        <ee:set-payload><![CDATA[%dw 2.0
+output application/json
+---
+{message: "Bad request"}]]></ee:set-payload>
+                    </ee:message>
+                    <ee:variables>
+                        <ee:set-variable variableName="httpStatus">400</ee:set-variable>
+                    </ee:variables>
+                </ee:transform>
+            </on-error-propagate>
+            <on-error-propagate type="APIKIT:NOT_FOUND">
+                <ee:transform xmlns:ee="http://www.mulesoft.org/schema/mule/ee/core" xsi:schemaLocation="http://www.mulesoft.org/schema/mule/ee/core http://www.mulesoft.org/schema/mule/ee/core/current/mule-ee.xsd">
+                    <ee:message>
+                        <ee:set-payload><![CDATA[%dw 2.0
+output application/json
+---
+{message: "Resource not found"}]]></ee:set-payload>
+                    </ee:message>
+                    <ee:variables>
+                        <ee:set-variable variableName="httpStatus">404</ee:set-variable>
+                    </ee:variables>
+                </ee:transform>
+            </on-error-propagate>
+            <on-error-propagate type="APIKIT:METHOD_NOT_ALLOWED">
+                <ee:transform xmlns:ee="http://www.mulesoft.org/schema/mule/ee/core" xsi:schemaLocation="http://www.mulesoft.org/schema/mule/ee/core http://www.mulesoft.org/schema/mule/ee/core/current/mule-ee.xsd">
+                    <ee:message>
+                        <ee:set-payload><![CDATA[%dw 2.0
+output application/json
+---
+{message: "Method not allowed"}]]></ee:set-payload>
+                    </ee:message>
+                    <ee:variables>
+                        <ee:set-variable variableName="httpStatus">405</ee:set-variable>
+                    </ee:variables>
+                </ee:transform>
+            </on-error-propagate>
+            <on-error-propagate type="APIKIT:NOT_ACCEPTABLE">
+                <ee:transform xmlns:ee="http://www.mulesoft.org/schema/mule/ee/core" xsi:schemaLocation="http://www.mulesoft.org/schema/mule/ee/core http://www.mulesoft.org/schema/mule/ee/core/current/mule-ee.xsd">
+                    <ee:message>
+                        <ee:set-payload><![CDATA[%dw 2.0
+output application/json
+---
+{message: "Not acceptable"}]]></ee:set-payload>
+                    </ee:message>
+                    <ee:variables>
+                        <ee:set-variable variableName="httpStatus">406</ee:set-variable>
+                    </ee:variables>
+                </ee:transform>
+            </on-error-propagate>
+            <on-error-propagate type="APIKIT:UNSUPPORTED_MEDIA_TYPE">
+                <ee:transform xmlns:ee="http://www.mulesoft.org/schema/mule/ee/core" xsi:schemaLocation="http://www.mulesoft.org/schema/mule/ee/core http://www.mulesoft.org/schema/mule/ee/core/current/mule-ee.xsd">
+                    <ee:message>
+                        <ee:set-payload><![CDATA[%dw 2.0
+output application/json
+---
+{message: "Unsupported media type"}]]></ee:set-payload>
+                    </ee:message>
+                    <ee:variables>
+                        <ee:set-variable variableName="httpStatus">415</ee:set-variable>
+                    </ee:variables>
+                </ee:transform>
+            </on-error-propagate>
+            <on-error-propagate type="APIKIT:NOT_IMPLEMENTED">
+                <ee:transform xmlns:ee="http://www.mulesoft.org/schema/mule/ee/core" xsi:schemaLocation="http://www.mulesoft.org/schema/mule/ee/core http://www.mulesoft.org/schema/mule/ee/core/current/mule-ee.xsd">
+                    <ee:message>
+                        <ee:set-payload><![CDATA[%dw 2.0
+output application/json
+---
+{message: "Not Implemented"}]]></ee:set-payload>
+                    </ee:message>
+                    <ee:variables>
+                        <ee:set-variable variableName="httpStatus">501</ee:set-variable>
+                    </ee:variables>
+                </ee:transform>
+            </on-error-propagate>
+        </error-handler>
+    </flow>
+    <flow name="hotelinfo-sys-api-console">
+        <http:listener config-ref="hotelinfo-sys-api-httpListenerConfig" path="/console/*">
+            <http:response statusCode="#[vars.httpStatus default 200]">
+                <http:headers>#[vars.outboundHeaders default {}]</http:headers>
+            </http:response>
+            <http:error-response statusCode="#[vars.httpStatus default 500]">
+                <http:body>#[payload]</http:body>
+                <http:headers>#[vars.outboundHeaders default {}]</http:headers>
+            </http:error-response>
+        </http:listener>
+        <apikit:console config-ref="hotelinfo-sys-api-config" />
+        <error-handler>
+            <on-error-propagate type="APIKIT:NOT_FOUND">
+                <ee:transform xmlns:ee="http://www.mulesoft.org/schema/mule/ee/core" xsi:schemaLocation="http://www.mulesoft.org/schema/mule/ee/core http://www.mulesoft.org/schema/mule/ee/core/current/mule-ee.xsd">
+                    <ee:message>
+                        <ee:set-payload><![CDATA[%dw 2.0
+output application/json
+---
+{message: "Resource not found"}]]></ee:set-payload>
+                    </ee:message>
+                    <ee:variables>
+                        <ee:set-variable variableName="httpStatus">404</ee:set-variable>
+                    </ee:variables>
+                </ee:transform>
+            </on-error-propagate>
+        </error-handler>
+    </flow>
+    <flow name="put:\hotelInfo:application\json:hotelinfo-sys-api-config">
+        <ee:transform xmlns:ee="http://www.mulesoft.org/schema/mule/ee/core" xsi:schemaLocation="http://www.mulesoft.org/schema/mule/ee/core http://www.mulesoft.org/schema/mule/ee/core/current/mule-ee.xsd">
+            <ee:message>
+                <ee:set-payload><![CDATA[%dw 2.0
+output application/json
+---
+{
+  message: "successfully updated the hotel"
+}]]></ee:set-payload>
+            </ee:message>
+        </ee:transform>
+    </flow>
+    <flow name="delete:\hotelInfo:hotelinfo-sys-api-config">
+        <ee:transform xmlns:ee="http://www.mulesoft.org/schema/mule/ee/core" xsi:schemaLocation="http://www.mulesoft.org/schema/mule/ee/core http://www.mulesoft.org/schema/mule/ee/core/current/mule-ee.xsd">
+            <ee:message>
+                <ee:set-payload><![CDATA[%dw 2.0
+output application/json
+---
+{
+  message: "successfully deleted the hotel from list"
+}]]></ee:set-payload>
+            </ee:message>
+        </ee:transform>
+    </flow>
+    <flow name="get:\hotelInfo:hotelinfo-sys-api-config">
+		<logger level="INFO" doc:name="Logger" doc:id="973517a8-92d2-4a43-afde-27ff6a128ccf" message="get flow started"/>
+		<ee:transform doc:name="Transform Message" doc:id="eaae8d14-ddc0-4e86-8697-8248dc127d6a" >
+			<ee:message >
+				<ee:set-payload ><![CDATA[%dw 2.0
+output application/json
+---
+payload]]></ee:set-payload>
+			</ee:message>
+		</ee:transform>
+    </flow>
+    <flow name="post:\hotelInfo:application\json:hotelinfo-sys-api-config">
+		<set-variable value="#[payload]" doc:name="Set Variable" doc:id="1b9f7d51-de81-4e42-a84b-cbb7ae3e0951" variableName="data"/>
+		<logger level="INFO" doc:name="Logger" doc:id="25d2078c-f202-47c7-90d5-34eb97c7f7cd" message="post flow started"/>
+		<choice doc:name="Choice" doc:id="9ec25875-59a4-4968-bf1f-e263291e8249" >
+			<when expression='#[message.attributes.method == "post"]'>
+				<flow-ref doc:name="Flow Reference" doc:id="9bfaf691-ebb6-4a34-bd15-8abc0b9c9e85" name="SaveDataToMongoDB"/>
+			</when>
+			<otherwise >
+				<mongo:list-collections doc:name="List collections" doc:id="36efae47-042b-4a0e-9fea-9009a5188056" config-ref="MongoDB_Config6" />
+			</otherwise>
+		</choice>
+    </flow>
+	<sub-flow name="SaveDataToMongoDB" doc:id="c4dc79d8-26fc-4a9e-baf2-79295535c476" >
+		<mongo:collection-exists collectionName="#[vars.data.hotelInfo]" doc:name="Collection exists" doc:id="da6fa72b-b287-4d1e-b973-de7f75fd96e4" config-ref="MongoDB_Config6"/>
+		<choice doc:name="Choice" doc:id="f5a2ab2a-81e0-4804-8a12-f2278fc615cf" >
+			<when expression="#[paylaod == false]">
+				<mongo:create-collection doc:name="Create collection" doc:id="3d8a04d2-b655-4972-a193-b04ca8bec7d3" config-ref="MongoDB_Config6" collectionName="#[vars.data.hotelInfo]"/>
+				<mongo:insert-documents collectionName="#[vars.data.hotelInfo]" doc:name="Insert documents" doc:id="325bf418-02bb-4f35-b57a-aa7a552feb89" config-ref="MongoDB_Config6">
+					<mongo:documents ><![CDATA[#[vars.data.hotelId]]]></mongo:documents>
+				</mongo:insert-documents>
+				<mongo:count-documents collectionName="#[vars.data.hotelInfo]" doc:name="Count documents" doc:id="4037fc45-df5e-4b87-9226-a632af1c9fe6" config-ref="MongoDB_Config6"/>
+				<ee:transform doc:name="Transform Message" doc:id="4045ebd0-7bfe-4431-803b-7f5f92e7d803" >
+					<ee:message >
+						<ee:set-payload ><![CDATA[%dw 2.0
+output application/json
+---
+{
+	"totalRecords" : payload
+}]]></ee:set-payload>
+					</ee:message>
+				</ee:transform>
+			</when>
+			<otherwise >
+				<logger level="INFO" doc:name="Logger" doc:id="47bf0f6b-a8c9-4a37-bd6f-83b6a3b2359f" message="saving data to existing collection"/>
+			</otherwise>
+		</choice>
+	</sub-flow>
+</mule>

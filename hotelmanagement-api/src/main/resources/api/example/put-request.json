@@ -1,0 +1,27 @@
+{
+    "hotelInfo":{   
+"hotelId": 6,
+"hotelName": "Infinity Hotel",
+"hotelLocation": "Bihar",
+"numberOfRoomwithoutAc": 5,
+"numberOfRoomwithAc": 6,
+"Aminities":
+	{	
+	"Auditorium": "yes",
+	"playGroun": "yes",
+	"swimingPool": "yes"
+	},
+"hotelAddress":
+	{
+	"address": "boraband Road",
+	"pinCode": "500018",
+	"state": "Telangana",
+	"district": "Any",
+	"country": "India",
+	"googleMapUrl": "http://jhgjhgj"
+	},
+"contactNumber": "1234567890",
+"mailAddress": "dfsalkfjk@gmail.com",
+"contactPerson": "prabakar"
+    }
+}
