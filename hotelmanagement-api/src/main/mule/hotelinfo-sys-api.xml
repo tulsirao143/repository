@@ -12,7 +12,6 @@ http://www.mulesoft.org/schema/mule/mongo http://www.mulesoft.org/schema/mule/mo
 	<mongo:config name="MongoDB_Config1" doc:name="MongoDB Config" doc:id="51f99224-f8aa-4d99-a9c2-7940af19df9c" >
 		<mongo:connection-string-connection connectionString="mongodb+srv://root:112212@cluster0.o1tom.mongodb.net/hotelMgmt?retryWrites=true&amp;w=majority" />
 	</mongo:config>
-	<mongo:config name="MongoDB_Config2" doc:name="MongoDB Config" doc:id="4f152da1-f4a2-451b-9673-2de6a07598eb" />
 	<mongo:config name="MongoDB_Config3" doc:name="MongoDB Config" doc:id="78495050-12f9-40c7-84b0-254946749db2" >
 		<mongo:connection-string-connection connectionString="mongodb+srv://root:112212@cluster0.o1tom.mongodb.net/hotelMgmt?retryWrites=true&amp;w=majority" />
 	</mongo:config>
@@ -174,6 +173,15 @@ output application/json
     <flow name="get:\hotelInfo:hotelinfo-sys-api-config">
 		<logger level="INFO" doc:name="Logger" doc:id="973517a8-92d2-4a43-afde-27ff6a128ccf" message="get flow started"/>
 		<ee:transform doc:name="Transform Message" doc:id="eaae8d14-ddc0-4e86-8697-8248dc127d6a" >
+			<ee:message >
+				<ee:set-payload ><![CDATA[%dw 2.0
+output application/json
+---
+payload]]></ee:set-payload>
+			</ee:message>
+		</ee:transform>
+		<mongo:find-documents doc:name="Find documents" doc:id="5745529a-9052-43d0-8c70-451eec022511" config-ref="MongoDB_Config" collectionName="hotelInfo" fields="hotelName,hotelLocation"/>
+		<ee:transform doc:name="Transform Message" doc:id="8342e17d-ab4c-4435-b5c8-735d8509f837" >
 			<ee:message >
 				<ee:set-payload ><![CDATA[%dw 2.0
 output application/json
