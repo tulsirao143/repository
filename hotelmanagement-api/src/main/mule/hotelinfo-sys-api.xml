@@ -172,23 +172,40 @@ output application/json
     </flow>
     <flow name="get:\hotelInfo:hotelinfo-sys-api-config">
 		<logger level="INFO" doc:name="Logger" doc:id="973517a8-92d2-4a43-afde-27ff6a128ccf" message="get flow started"/>
-		<ee:transform doc:name="Transform Message" doc:id="eaae8d14-ddc0-4e86-8697-8248dc127d6a" >
-			<ee:message >
-				<ee:set-payload ><![CDATA[%dw 2.0
+		<choice doc:name="Choice" doc:id="d40bcb69-8710-43d4-88a6-895a2ed608d6" >
+			<when expression="#[!isEmpty(attributes.queryParams)]">
+				<mongo:find-documents doc:name="Find documents" doc:id="3254804f-19cc-42f8-8916-3493462b7d0a" config-ref="MongoDB_Config" collectionName="hotelInfo" fields="hotelName,hotelLocation,hotelId,numberOfRoomwithoutAc,numberOfRoomwithAc,Aminities,hotelAddress,contactNumber,mailAddress,contactPerson">
+					<mongo:query ><![CDATA[#["{ hotelId: " ++ attributes.queryParams.hotelId ++ "}"]]]></mongo:query>
+				</mongo:find-documents>
+				<ee:transform doc:name="Transform Message" doc:id="92a5edd8-135a-45cd-be2c-e1d2dd48dda4" >
+					<ee:message >
+						<ee:set-payload ><![CDATA[%dw 2.0
+output application/json
+---
+payload[0]]]></ee:set-payload>
+					</ee:message>
+				</ee:transform>
+			</when>
+			<otherwise >
+				<ee:transform doc:name="Transform Message" doc:id="eaae8d14-ddc0-4e86-8697-8248dc127d6a">
+			<ee:message>
+				<ee:set-payload><![CDATA[%dw 2.0
 output application/json
 ---
 payload]]></ee:set-payload>
 			</ee:message>
 		</ee:transform>
-		<mongo:find-documents doc:name="Find documents" doc:id="5745529a-9052-43d0-8c70-451eec022511" config-ref="MongoDB_Config" collectionName="hotelInfo" fields="hotelName,hotelLocation"/>
-		<ee:transform doc:name="Transform Message" doc:id="8342e17d-ab4c-4435-b5c8-735d8509f837" >
-			<ee:message >
-				<ee:set-payload ><![CDATA[%dw 2.0
+				<mongo:find-documents doc:name="Find documents" doc:id="5745529a-9052-43d0-8c70-451eec022511" config-ref="MongoDB_Config" collectionName="hotelInfo" fields="hotelName,hotelLocation,hotelId,numberOfRoomwithoutAc,numberOfRoomwithAc,Aminities,hotelAddress,contactNumber,mailAddress,contactPerson" />
+				<ee:transform doc:name="Transform Message" doc:id="8342e17d-ab4c-4435-b5c8-735d8509f837">
+			<ee:message>
+				<ee:set-payload><![CDATA[%dw 2.0
 output application/json
 ---
 payload]]></ee:set-payload>
 			</ee:message>
 		</ee:transform>
+			</otherwise>
+		</choice>
     </flow>
     <flow name="post:\hotelInfo:application\json:hotelinfo-sys-api-config">
 		<set-variable value="#[payload]" doc:name="Set Variable" doc:id="1b9f7d51-de81-4e42-a84b-cbb7ae3e0951" variableName="data"/>
