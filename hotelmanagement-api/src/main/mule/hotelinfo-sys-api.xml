@@ -208,40 +208,8 @@ payload]]></ee:set-payload>
 		</choice>
     </flow>
     <flow name="post:\hotelInfo:application\json:hotelinfo-sys-api-config">
-		<set-variable value="#[payload]" doc:name="Set Variable" doc:id="1b9f7d51-de81-4e42-a84b-cbb7ae3e0951" variableName="data"/>
-		<logger level="INFO" doc:name="Logger" doc:id="25d2078c-f202-47c7-90d5-34eb97c7f7cd" message="post flow started"/>
-		<choice doc:name="Choice" doc:id="9ec25875-59a4-4968-bf1f-e263291e8249" >
-			<when expression='#[message.attributes.method == "post"]'>
-				<flow-ref doc:name="Flow Reference" doc:id="9bfaf691-ebb6-4a34-bd15-8abc0b9c9e85" name="SaveDataToMongoDB"/>
-			</when>
-			<otherwise >
-				<mongo:list-collections doc:name="List collections" doc:id="36efae47-042b-4a0e-9fea-9009a5188056" config-ref="MongoDB_Config6" />
-			</otherwise>
-		</choice>
+		<logger level="INFO" doc:name="Logger" doc:id="25d2078c-f202-47c7-90d5-34eb97c7f7cd" message="post flow started" />
+		<mongo:insert-document collectionName="hotelInfo" doc:name="Insert document" doc:id="9313cdf0-ee6c-4567-9942-21271513ba24" config-ref="MongoDB_Config"/>
+		<set-payload value="document inserted successfully" doc:name="Set Payload" doc:id="7bfe8d90-959c-491a-8868-e0df271b273f" />
     </flow>
-	<sub-flow name="SaveDataToMongoDB" doc:id="c4dc79d8-26fc-4a9e-baf2-79295535c476" >
-		<mongo:collection-exists collectionName="#[vars.data.hotelInfo]" doc:name="Collection exists" doc:id="da6fa72b-b287-4d1e-b973-de7f75fd96e4" config-ref="MongoDB_Config6"/>
-		<choice doc:name="Choice" doc:id="f5a2ab2a-81e0-4804-8a12-f2278fc615cf" >
-			<when expression="#[paylaod == false]">
-				<mongo:create-collection doc:name="Create collection" doc:id="3d8a04d2-b655-4972-a193-b04ca8bec7d3" config-ref="MongoDB_Config6" collectionName="#[vars.data.hotelInfo]"/>
-				<mongo:insert-documents collectionName="#[vars.data.hotelInfo]" doc:name="Insert documents" doc:id="325bf418-02bb-4f35-b57a-aa7a552feb89" config-ref="MongoDB_Config6">
-					<mongo:documents ><![CDATA[#[vars.data.hotelId]]]></mongo:documents>
-				</mongo:insert-documents>
-				<mongo:count-documents collectionName="#[vars.data.hotelInfo]" doc:name="Count documents" doc:id="4037fc45-df5e-4b87-9226-a632af1c9fe6" config-ref="MongoDB_Config6"/>
-				<ee:transform doc:name="Transform Message" doc:id="4045ebd0-7bfe-4431-803b-7f5f92e7d803" >
-					<ee:message >
-						<ee:set-payload ><![CDATA[%dw 2.0
-output application/json
----
-{
-	"totalRecords" : payload
-}]]></ee:set-payload>
-					</ee:message>
-				</ee:transform>
-			</when>
-			<otherwise >
-				<logger level="INFO" doc:name="Logger" doc:id="47bf0f6b-a8c9-4a37-bd6f-83b6a3b2359f" message="saving data to existing collection"/>
-			</otherwise>
-		</choice>
-	</sub-flow>
 </mule>
