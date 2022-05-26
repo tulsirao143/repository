@@ -9,24 +9,6 @@ http://www.mulesoft.org/schema/mule/mongo http://www.mulesoft.org/schema/mule/mo
     <mongo:config name="MongoDB_Config" doc:name="MongoDB Config" doc:id="f3a303ef-8a4e-469d-81d0-479a54911d65" >
 		<mongo:connection-string-connection connectionString="mongodb+srv://root:112212@cluster0.o1tom.mongodb.net/hotelMgmt?retryWrites=true&amp;w=majority" />
 	</mongo:config>
-	<mongo:config name="MongoDB_Config1" doc:name="MongoDB Config" doc:id="51f99224-f8aa-4d99-a9c2-7940af19df9c" >
-		<mongo:connection-string-connection connectionString="mongodb+srv://root:112212@cluster0.o1tom.mongodb.net/hotelMgmt?retryWrites=true&amp;w=majority" />
-	</mongo:config>
-	<mongo:config name="MongoDB_Config3" doc:name="MongoDB Config" doc:id="78495050-12f9-40c7-84b0-254946749db2" >
-		<mongo:connection-string-connection connectionString="mongodb+srv://root:112212@cluster0.o1tom.mongodb.net/hotelMgmt?retryWrites=true&amp;w=majority" />
-	</mongo:config>
-	<mongo:config name="MongoDB_Config4" doc:name="MongoDB Config" doc:id="8d08f7d5-30a0-480c-9b5e-778fcce9a308" >
-		<mongo:connection-string-connection connectionString="mongodb+srv://root:112212@cluster0.o1tom.mongodb.net/hotelMgmt?retryWrites=true&amp;w=majority" />
-	</mongo:config>
-	<mongo:config name="MongoDB_Config5" doc:name="MongoDB Config" doc:id="c517d3fa-7834-4ed4-874b-223124ce4dec" >
-		<mongo:connection-string-connection connectionString="mongodb+srv://root:112212@cluster0.o1tom.mongodb.net/hotelMgmt?retryWrites=true&amp;w=majority" />
-	</mongo:config>
-	<mongo:config name="MongoDB_Config6" doc:name="MongoDB Config" doc:id="9c8fbad4-07a1-46d6-a4e8-1fda2d97fb8c" >
-		<mongo:connection-string-connection connectionString="mongodb+srv://root:112212@cluster0.o1tom.mongodb.net/hotelMgmt?retryWrites=true&amp;w=majority" />
-	</mongo:config>
-	<mongo:config name="MongoDB_Config7" doc:name="MongoDB Config" doc:id="d8f98670-2538-4ac0-86ef-22bb41e5290c" >
-		<mongo:connection-string-connection connectionString="mongodb+srv://root:112212@cluster0.o1tom.mongodb.net/hotelMgmt?retryWrites=true&amp;w=majority" />
-	</mongo:config>
 	<flow name="hotelinfo-sys-api-main">
         <http:listener config-ref="hotelinfo-sys-api-httpListenerConfig" path="/api/*">
             <http:response statusCode="#[vars.httpStatus default 200]">
@@ -210,6 +192,16 @@ payload]]></ee:set-payload>
     <flow name="post:\hotelInfo:application\json:hotelinfo-sys-api-config">
 		<logger level="INFO" doc:name="Logger" doc:id="25d2078c-f202-47c7-90d5-34eb97c7f7cd" message="post flow started" />
 		<mongo:insert-document collectionName="hotelInfo" doc:name="Insert document" doc:id="9313cdf0-ee6c-4567-9942-21271513ba24" config-ref="MongoDB_Config"/>
-		<set-payload value="document inserted successfully" doc:name="Set Payload" doc:id="7bfe8d90-959c-491a-8868-e0df271b273f" />
+		<mongo:count-documents doc:name="Count documents" doc:id="73df9b3f-6cf1-42b8-a4c5-384e31acf572" config-ref="MongoDB_Config" collectionName="hotelInfo"/>
+		<ee:transform doc:name="Transform Message" doc:id="196969ec-838e-421c-9c16-6b2b3d73f6e2" >
+			<ee:message >
+				<ee:set-payload ><![CDATA[%dw 2.0
+output application/json
+---
+{
+	"TotalRecords": payload
+}]]></ee:set-payload>
+			</ee:message>
+		</ee:transform>
     </flow>
 </mule>
