@@ -128,26 +128,22 @@ output application/json
             </on-error-propagate>
         </error-handler>
     </flow>
-    <flow name="put:\hotelInfo:application\json:hotelinfo-sys-api-config">
-        <ee:transform xmlns:ee="http://www.mulesoft.org/schema/mule/ee/core" xsi:schemaLocation="http://www.mulesoft.org/schema/mule/ee/core http://www.mulesoft.org/schema/mule/ee/core/current/mule-ee.xsd">
-            <ee:message>
-                <ee:set-payload><![CDATA[%dw 2.0
-output application/json
----
-{
-  message: "successfully updated the hotel"
-}]]></ee:set-payload>
-            </ee:message>
-        </ee:transform>
+	<flow name="put:\hotelInfo:application\json:hotelinfo-sys-api-config">
+		<flow-ref doc:name="Flow Reference" doc:id="1d1e07bd-e464-4d8d-a05b-606456b17811" name="hotelStaff-apiSub_Flow"/>
     </flow>
-    <flow name="delete:\hotelInfo:hotelinfo-sys-api-config">
-        <ee:transform xmlns:ee="http://www.mulesoft.org/schema/mule/ee/core" xsi:schemaLocation="http://www.mulesoft.org/schema/mule/ee/core http://www.mulesoft.org/schema/mule/ee/core/current/mule-ee.xsd">
+	<flow name="delete:\hotelInfo:hotelinfo-sys-api-config">
+        <logger level="INFO" doc:name="Logger" doc:id="81ae327f-caa8-4e77-a986-a025f6a33344" message="delete flow started"/>
+		<mongo:remove-documents doc:name="Remove documents" doc:id="e8973789-8ea4-440d-899b-65463f7738ae" config-ref="MongoDB_Config" collectionName="hotelInfo">
+			<mongo:query ><![CDATA[#["{ hotelId: " ++ attributes.queryParams.hotelId ++ "}"]]]></mongo:query>
+		</mongo:remove-documents>
+		<mongo:count-documents doc:name="Count documents" doc:id="f53b8d26-aa50-4d00-9398-3d10a1518eb0" config-ref="MongoDB_Config" collectionName="hotelInfo"/>
+		<ee:transform xmlns:ee="http://www.mulesoft.org/schema/mule/ee/core" xsi:schemaLocation="http://www.mulesoft.org/schema/mule/ee/core http://www.mulesoft.org/schema/mule/ee/core/current/mule-ee.xsd">
             <ee:message>
                 <ee:set-payload><![CDATA[%dw 2.0
 output application/json
 ---
 {
-  message: "successfully deleted the hotel from list"
+	"TotalRecords": payload
 }]]></ee:set-payload>
             </ee:message>
         </ee:transform>
@@ -204,4 +200,19 @@ output application/json
 			</ee:message>
 		</ee:transform>
     </flow>
+	<sub-flow name="hotelStaff-apiSub_Flow" doc:id="237ae786-f42c-4ecf-8463-57dae0cc92cb" >
+		<logger level="INFO" doc:name="Logger" doc:id="1f56ca4d-e500-453a-ba74-1859b07417a9" message="put method starte"/>
+		<mongo:insert-document doc:name="Insert document" doc:id="8e5f9c82-fea1-4d09-b9c1-4346a3b4e7b2" config-ref="MongoDB_Config" collectionName="hotelInfo" />
+		<mongo:count-documents collectionName="hotelInfo" doc:name="Count documents" doc:id="9e4d8784-c6ae-4f6e-8557-202068d7f0bc" config-ref="MongoDB_Config"/>
+		<ee:transform doc:name="Transform Message" doc:id="32bbfa64-2f71-48a6-a32f-b94d939da041">
+					<ee:message>
+						<ee:set-payload><![CDATA[%dw 2.0
+output application/json
+---
+{
+	"TotalRecords": payload
+}]]></ee:set-payload>
+					</ee:message>
+				</ee:transform>
+	</sub-flow>
 </mule>
