@@ -148,7 +148,7 @@ output application/json
             </ee:message>
         </ee:transform>
     </flow>
-    <flow name="get:\hotelInfo:hotelinfo-sys-api-config">
+	<flow name="get:\hotelInfo:hotelinfo-sys-api-config">
 		<logger level="INFO" doc:name="Logger" doc:id="973517a8-92d2-4a43-afde-27ff6a128ccf" message="get flow started"/>
 		<choice doc:name="Choice" doc:id="d40bcb69-8710-43d4-88a6-895a2ed608d6" >
 			<when expression="#[!isEmpty(attributes.queryParams)]">
@@ -187,7 +187,6 @@ payload]]></ee:set-payload>
     </flow>
     <flow name="post:\hotelInfo:application\json:hotelinfo-sys-api-config">
 		<logger level="INFO" doc:name="Logger" doc:id="25d2078c-f202-47c7-90d5-34eb97c7f7cd" message="post flow started" />
-		<mongo:insert-document collectionName="hotelInfo" doc:name="Insert document" doc:id="9313cdf0-ee6c-4567-9942-21271513ba24" config-ref="MongoDB_Config"/>
 		<mongo:count-documents doc:name="Count documents" doc:id="73df9b3f-6cf1-42b8-a4c5-384e31acf572" config-ref="MongoDB_Config" collectionName="hotelInfo"/>
 		<ee:transform doc:name="Transform Message" doc:id="196969ec-838e-421c-9c16-6b2b3d73f6e2" >
 			<ee:message >
@@ -202,7 +201,15 @@ output application/json
     </flow>
 	<sub-flow name="hotelStaff-apiSub_Flow" doc:id="237ae786-f42c-4ecf-8463-57dae0cc92cb" >
 		<logger level="INFO" doc:name="Logger" doc:id="1f56ca4d-e500-453a-ba74-1859b07417a9" message="put method starte"/>
-		<mongo:insert-document doc:name="Insert document" doc:id="8e5f9c82-fea1-4d09-b9c1-4346a3b4e7b2" config-ref="MongoDB_Config" collectionName="hotelInfo" />
+		<set-variable value="#[payload]" doc:name="Set Variable" doc:id="6e401e44-da59-4afe-b56d-df77d2ec7833" variableName="IdUpdated"/>
+		<first-successful doc:name="First Successful" doc:id="cb018729-6732-401b-a573-9f1c52a39f16">
+			<route>
+				<mongo:insert-documents collectionName="hotelInfo" doc:name="Insert documents" doc:id="537c594c-3846-4fcb-b84c-f4f81f04b023" config-ref="MongoDB_Config" />
+			</route>
+			<route>
+				<mongo:insert-document collectionName="hotelInfo" doc:name="Insert document" doc:id="8c8cd013-813c-4b4b-9a6c-1cdd1aa51270" config-ref="MongoDB_Config" />
+			</route>
+		</first-successful>
 		<mongo:count-documents collectionName="hotelInfo" doc:name="Count documents" doc:id="9e4d8784-c6ae-4f6e-8557-202068d7f0bc" config-ref="MongoDB_Config"/>
 		<ee:transform doc:name="Transform Message" doc:id="32bbfa64-2f71-48a6-a32f-b94d939da041">
 					<ee:message>
@@ -210,7 +217,8 @@ output application/json
 output application/json
 ---
 {
-	"TotalRecords": payload
+	"TotalRecords": payload,
+	"hotelName" : vars.IdUpdated.employeeName ++ "updatedSuccessfully"
 }]]></ee:set-payload>
 					</ee:message>
 				</ee:transform>
