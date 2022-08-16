@@ -9,6 +9,8 @@ http://www.mulesoft.org/schema/mule/mongo http://www.mulesoft.org/schema/mule/mo
     <mongo:config name="MongoDB_Config" doc:name="MongoDB Config" doc:id="f3a303ef-8a4e-469d-81d0-479a54911d65" >
 		<mongo:connection-string-connection connectionString="mongodb+srv://root:112212@cluster0.o1tom.mongodb.net/hotelMgmt?retryWrites=true&amp;w=majority" />
 	</mongo:config>
+	<flow name="hotelinfo-sys-apiFlow" doc:id="032426a4-8187-420f-b81b-91dc68968d6e" >
+	</flow>
 	<flow name="hotelinfo-sys-api-main">
         <http:listener config-ref="hotelinfo-sys-api-httpListenerConfig" path="/api/*">
             <http:response statusCode="#[vars.httpStatus default 200]">
@@ -151,7 +153,7 @@ output application/json
 	<flow name="get:\hotelInfo:hotelinfo-sys-api-config">
 		<logger level="INFO" doc:name="Logger" doc:id="973517a8-92d2-4a43-afde-27ff6a128ccf" message="get flow started"/>
 		<choice doc:name="Choice" doc:id="d40bcb69-8710-43d4-88a6-895a2ed608d6" >
-			<when expression="#[!isEmpty(attributes.queryParams)]">
+			<when expression="#[!isEmpty(attributes.queryParams.hotelId)]">
 				<mongo:find-documents doc:name="Find documents" doc:id="3254804f-19cc-42f8-8916-3493462b7d0a" config-ref="MongoDB_Config" collectionName="hotelInfo" fields="hotelName,hotelLocation,hotelId,numberOfRoomwithoutAc,numberOfRoomwithAc,Aminities,hotelAddress,contactNumber,mailAddress,contactPerson">
 					<mongo:query ><![CDATA[#["{ hotelId: " ++ attributes.queryParams.hotelId ++ "}"]]]></mongo:query>
 				</mongo:find-documents>
@@ -161,6 +163,39 @@ output application/json
 output application/json
 ---
 payload[0]]]></ee:set-payload>
+					</ee:message>
+				</ee:transform>
+			</when>
+			<when expression="#[!isEmpty(attributes.queryParams.filter)]">
+				<logger level="INFO" doc:name="Logger" doc:id="5824f2be-4731-4d38-947d-a612ba7ed1d7" />
+				<ee:transform doc:name="Transform Message" doc:id="e7179617-42f6-4946-8b95-7f1fd7d291c4">
+					<ee:message>
+						<ee:set-payload><![CDATA[%dw 2.0
+output application/java
+---
+{
+}]]></ee:set-payload>
+					</ee:message>
+					<ee:variables >
+						<ee:set-variable variableName="filterKey" ><![CDATA[%dw 2.0
+output application/java
+---
+trim((attributes.queryParams.filter splitBy("="))[0])]]></ee:set-variable>
+						<ee:set-variable variableName="filterValue" ><![CDATA[%dw 2.0
+output application/java
+---
+trim((attributes.queryParams.filter splitBy("="))[1])]]></ee:set-variable>
+					</ee:variables>
+				</ee:transform>
+				<mongo:find-documents doc:name="Find documents" doc:id="f079cca0-fdde-4e67-9ba6-15a5312937b3" config-ref="MongoDB_Config" collectionName="hotelInfo" fields="hotelName,hotelLocation,hotelId,numberOfRoomwithoutAc,numberOfRoomwithAc,Aminities,hotelAddress,contactNumber,mailAddress,contactPerson">
+					<mongo:query ><![CDATA[#["{" ++ vars.filterKey ++ ": " ++ vars.filterValue ++ "}"]]]></mongo:query>
+				</mongo:find-documents>
+				<ee:transform doc:name="Transform Message" doc:id="1b2a17ea-753c-4f13-9911-07935eb24074" >
+					<ee:message >
+						<ee:set-payload ><![CDATA[%dw 2.0
+output application/json
+---
+payload]]></ee:set-payload>
 					</ee:message>
 				</ee:transform>
 			</when>
